@@ -18,4 +18,23 @@ contract("TodoList", (accounts) => {
         const task = await this.todolist.tasks(taskCount);
         assert.equal(task.id.toNumber(), taskCount.toNumber());
     })
+
+    it('creates task', async () => {
+        const result = await this.todolist.createTask('A new task');
+        const taskCount = await this.todolist.TaskCount();
+        assert.equal(taskCount, 2);
+        const event = result.logs[0].args;
+        assert.equal(event.id.toNumber(), 2);
+        assert.equal(event.content, 'A new task');
+        assert.equal(event.completed, false);
+    })
+
+    it('toggles task', async () => {
+        const result = await this.todolist.toggleCompleted(1);
+        const task = await this.todolist.tasks(1);
+        assert.equal(task.completed, true);
+        const event = result.logs[0].args;
+        assert.equal(event.id.toNumber(), 1);
+        assert.equal(event.completed, true);
+    })
 })
